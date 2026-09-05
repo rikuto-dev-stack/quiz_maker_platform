@@ -4,5 +4,5 @@
 
 ## 技術スタック
 - フロントエンド: TypeScript
-- バックエンド: Java（予定）
+- バックエンド: Python（予定）
 - データベース: PostgreSQL（予定）
