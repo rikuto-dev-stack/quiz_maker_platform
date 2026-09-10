@@ -40,6 +40,11 @@ function renderHome(): void {
   })
 }
 
+//formタグは、複数の入力要素（タグ）を１つのまとまりとして扱うためのHTMLタグとなる。
+// <button type="submit">作成する</button>のsubmitは、送信するという意味。
+
+//inputタグは入力欄そのものを作成するタグ
+//type="text"は、入力タイプはテキストですよ、requiredは、入力必須、という内容の
 function renderCreateQuizSet(): void {
   document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <h1>新しい問題集を作る</h1>
