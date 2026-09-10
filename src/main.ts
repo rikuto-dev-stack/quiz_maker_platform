@@ -57,8 +57,27 @@ function renderCreateQuizSet(): void {
   `
 
   document.querySelector<HTMLFormElement>('#create-quiz-set-form')!.addEventListener('submit', (event) => {
+    
+    //event.preventDefault()は、ブラウザが本来やろうとしている動きを止める処理
+    //今回の場合は、フォームを送信した際に、ブラウザがページの再読み込みするのを止めるために使っている
+    //厳密にいうと、イベントに対して、ブラウザが持っているイベントをキャンセルするためのもの
     event.preventDefault()
-    alert('問題集を作成する処理はこれから実装します')
+
+    //新しく変数を宣言
+    //quiz-set-name
+    const nameInput = document.querySelector<HTMLInputElement>('#quiz-set-name')!
+    
+    //QuiZSet型の変数を新しく作成している
+    //
+    const newQuizSet: QuizSet = {
+      //idで、配列の次の要素番号に格納しますよ、としている
+    id: String(quizSets.length + 1),
+      //nameに先ほど宣言したnameInputのものを設定している
+    name: nameInput.value,
+  }
+
+   quizSets.push(newQuizSet)
+    renderHome()
   })
 
   //document.querySelectorは、HTMLの中から条件に一致する要素を探す、という意味
