@@ -11,7 +11,7 @@ const quizSets: QuizSet[] = [
   //functionの後に関数名、続けて（）は受け取る引数（今回はなし）
   //voidは、「この関数は何も値を返さない（戻り値なし）」を示す型
 
-  //renderformは、
+  //renderformは、{}内の処理を実行するための関数
 function renderHome(): void {
   document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <h1>クイズ作成プラットフォーム</h1>
@@ -36,8 +36,34 @@ function renderHome(): void {
 
 
   document.querySelector<HTMLButtonElement>('#create-quiz-set-button')!.addEventListener('click', () => {
-    alert('問題集作成画面はこれから実装します')
+    renderCreateQuizSet()
   })
 }
 
+function renderCreateQuizSet(): void {
+  document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
+    <h1>新しい問題集を作る</h1>
+    <form id="create-quiz-set-form">
+      <label for="quiz-set-name">問題集の名前</label>
+      <input id="quiz-set-name" type="text" required />
+      <button type="submit">作成する</button>
+    </form>
+    <button id="back-to-home-button">ホーム画面に戻る</button>
+  `
+
+  document.querySelector<HTMLFormElement>('#create-quiz-set-form')!.addEventListener('submit', (event) => {
+    event.preventDefault()
+    alert('問題集を作成する処理はこれから実装します')
+  })
+
+  //document.querySelectorは、HTMLの中から条件に一致する要素を探す、という意味
+  document.querySelector<HTMLButtonElement>('#back-to-home-button')!.addEventListener('click', () => {
+    
+    //.addEventListener('click'というアロー関数の中に書かれており、
+    //「このボタンがクリックされたら、この画面に戻ってください。」
+    //という意味。
+    renderHome()
+  })
+}
+//main.tsが読み込まれた瞬間に即座に実行される呼び出し
 renderHome()
