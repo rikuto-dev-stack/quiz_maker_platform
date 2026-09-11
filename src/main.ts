@@ -3,8 +3,8 @@ import type { QuizSet } from './types.ts'
 
 //quizSetsは、ここで新しく作成した変数
 const quizSets: QuizSet[] = [
-  { id: '1', name: '英単語 中学レベル' },
-  { id: '2', name: '歴史年号クイズ' },
+  { id: '1', name: '英単語 中学レベル' , questions: [] },
+  { id: '2', name: '歴史年号クイズ' , questions: [] },
 ]
 
 //関数を定義する書き方。
@@ -74,18 +74,52 @@ function renderCreateQuizSet(): void {
     id: String(quizSets.length + 1),
       //nameに先ほど宣言したnameInputのものを設定している
     name: nameInput.value,
+    questions: [],
   }
 
    quizSets.push(newQuizSet)
-    renderHome()
+    renderAddQuestion(newQuizSet.id)
   })
 
+  
   //document.querySelectorは、HTMLの中から条件に一致する要素を探す、という意味
   document.querySelector<HTMLButtonElement>('#back-to-home-button')!.addEventListener('click', () => {
     
     //.addEventListener('click'というアロー関数の中に書かれており、
     //「このボタンがクリックされたら、この画面に戻ってください。」
     //という意味。
+    renderHome()
+  })
+}
+
+function renderAddQuestion(quizSetId: string): void {
+  const quizSet = quizSets.find((quizSet) => quizSet.id === quizSetId)!
+
+  document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
+    <h1>「${quizSet.name}」に問題を追加</h1>
+    <form id="add-question-form">
+      <label for="question-text">問題文</label>
+      <input id="question-text" type="text" required />
+
+      <label for="choice-0">選択肢1</label>
+      <input id="choice-0" type="text" required />
+      <label for="choice-1">選択肢2</label>
+      <input id="choice-1" type="text" required />
+      <label for="choice-2">選択肢3</label>
+      <input id="choice-2" type="text" required />
+      <label for="choice-3">選択肢4</label>
+      <input id="choice-3" type="text" required />
+
+      <label for="correct-index">正解の選択肢の番号（1〜4）</label>
+      <input id="correct-index" type="number" min="1" max="4" required />
+
+      <button type="submit">この問題を保存する</button>
+    </form>
+    <p>現在の問題数: ${quizSet.questions.length}問</p>
+    <button id="finish-button">完了してホームに戻る</button>
+  `
+
+  document.querySelector<HTMLButtonElement>('#finish-button')!.addEventListener('click', () => {
     renderHome()
   })
 }
