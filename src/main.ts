@@ -1,5 +1,5 @@
 import './style.css'
-import type { QuizSet } from './types.ts'
+import type { QuizSet, Question} from './types.ts'
 
 //quizSetsは、ここで新しく作成した変数
 const quizSets: QuizSet[] = [
@@ -92,9 +92,16 @@ function renderCreateQuizSet(): void {
   })
 }
 
+//function renderAddQuestion(quizSetId: string): voidは、renderAddQuestionを呼び出す時に
+//quizSetIdという文字列を１つ受け取ります、という意味
 function renderAddQuestion(quizSetId: string): void {
+  //
+  //quizSet.id === quizSetIdは、quizSetIdの方から該当するものを探している
+  //
   const quizSet = quizSets.find((quizSet) => quizSet.id === quizSetId)!
 
+  //document.querySelector<HTMLDivElement>('#app')!.innerHTML =の部分は、
+  //このformタグの中身を表示している部分
   document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <h1>「${quizSet.name}」に問題を追加</h1>
     <form id="add-question-form">
@@ -118,6 +125,28 @@ function renderAddQuestion(quizSetId: string): void {
     <p>現在の問題数: ${quizSet.questions.length}問</p>
     <button id="finish-button">完了してホームに戻る</button>
   `
+
+  document.querySelector<HTMLFormElement>('#add-question-form')!.addEventListener('submit', (event) => {
+    event.preventDefault()
+
+    //問題文、選択肢、解答の照合番号の入力欄の要素を格納する変数を作成している
+    const questionTextInput = document.querySelector<HTMLInputElement>('#question-text')!
+    const choice0Input = document.querySelector<HTMLInputElement>('#choice-0')!
+    const choice1Input = document.querySelector<HTMLInputElement>('#choice-1')!
+    const choice2Input = document.querySelector<HTMLInputElement>('#choice-2')!
+    const choice3Input = document.querySelector<HTMLInputElement>('#choice-3')!
+    const correctIndexInput = document.querySelector<HTMLInputElement>('#correct-index')!
+
+    const newQuestion: Question = {
+      questionText: questionTextInput.value,
+      choices: [choice0Input.value, choice1Input.value, choice2Input.value, choice3Input.value],
+      correctIndex: Number(correctIndexInput.value) - 1,
+    }
+
+    quizSet.questions.push(newQuestion)
+
+    renderAddQuestion(quizSetId)
+  })
 
   document.querySelector<HTMLButtonElement>('#finish-button')!.addEventListener('click', () => {
     renderHome()
