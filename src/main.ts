@@ -11,7 +11,7 @@ const quizSets: QuizSet[] = [
   //functionの後に関数名、続けて（）は受け取る引数（今回はなし）
   //voidは、「この関数は何も値を返さない（戻り値なし）」を示す型
 
-  //renderformは、{}内の処理を実行するための関数
+  //renderformは、ホーム画面を構成しているHTMLを呼び出すための関数
 function renderHome(): void {
   document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <h1>クイズ作成プラットフォーム</h1>
@@ -20,11 +20,7 @@ function renderHome(): void {
       ${quizSets.map((quizSet) => `<li>${quizSet.name}</li>`).join('')}
     </ul>
   `
-//<ul></ul>は、リストを表すタグ
-//quizSetsは、最初に定義した問題集の配列
-//mapは、()内の配列を1個ずつ取り出して、別の形に変換して、その形式で新しい配列を返してねって
-//処理ってことだね
-
+//
 //(quizSet) =>は、アロー関数という書き方になる
 //これを普通の関数風に書くと、
 //function (quizSet) {
@@ -39,12 +35,8 @@ function renderHome(): void {
     renderCreateQuizSet()
   })
 }
+//
 
-//formタグは、複数の入力要素（タグ）を１つのまとまりとして扱うためのHTMLタグとなる。
-// <button type="submit">作成する</button>のsubmitは、送信するという意味。
-
-//inputタグは入力欄そのものを作成するタグ
-//type="text"は、入力タイプはテキストですよ、requiredは、入力必須、という内容の
 function renderCreateQuizSet(): void {
   document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <h1>新しい問題集を作る</h1>
@@ -70,8 +62,11 @@ function renderCreateQuizSet(): void {
     //QuiZSet型の変数を新しく作成している
     //
     const newQuizSet: QuizSet = {
+
       //idで、配列の次の要素番号に格納しますよ、としている
+    
     id: String(quizSets.length + 1),
+      
       //nameに先ほど宣言したnameInputのものを設定している
     name: nameInput.value,
     questions: [],
@@ -92,8 +87,7 @@ function renderCreateQuizSet(): void {
   })
 }
 
-//function renderAddQuestion(quizSetId: string): voidは、renderAddQuestionを呼び出す時に
-//quizSetIdという文字列を１つ受け取ります、という意味
+
 function renderAddQuestion(quizSetId: string): void {
   //
   //quizSet.id === quizSetIdは、quizSetIdの方から該当するものを探している
@@ -123,8 +117,21 @@ function renderAddQuestion(quizSetId: string): void {
       <button type="submit">この問題を保存する</button>
     </form>
     <p>現在の問題数: ${quizSet.questions.length}問</p>
+    <h2>作成済みの問題</h2>
+    <ul id="question-list"></ul>
+    
     <button id="finish-button">完了してホームに戻る</button>
   `
+  //ここに作成した問題の一覧の内容を作成していく
+
+  const questionList = quizSet.questions.map((question) => {
+    return `<li>${question.questionText}</li>`
+
+
+  })
+
+  document.querySelector<HTMLUListElement>('#question-list')!.innerHTML = questionList.join('')
+
 
   document.querySelector<HTMLFormElement>('#add-question-form')!.addEventListener('submit', (event) => {
     event.preventDefault()
@@ -137,11 +144,13 @@ function renderAddQuestion(quizSetId: string): void {
     const choice3Input = document.querySelector<HTMLInputElement>('#choice-3')!
     const correctIndexInput = document.querySelector<HTMLInputElement>('#correct-index')!
 
+    //上で変数に格納した要素からテキストデータだけを取り出す処理
     const newQuestion: Question = {
       questionText: questionTextInput.value,
       choices: [choice0Input.value, choice1Input.value, choice2Input.value, choice3Input.value],
       correctIndex: Number(correctIndexInput.value) - 1,
     }
+
 
     quizSet.questions.push(newQuestion)
 
