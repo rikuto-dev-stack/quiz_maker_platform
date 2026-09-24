@@ -125,9 +125,18 @@ function renderAddQuestion(quizSetId: string): void {
   //ここに作成した問題の一覧の内容を作成していく
 
   const questionList = quizSet.questions.map((question) => {
-    return `<li>${question.questionText}</li>`
-
-
+    return `
+      <li>
+        <p>${question.questionText}</p>
+        <ul>
+          <li>${question.choices[0]}</li>
+          <li>${question.choices[1]}</li>
+          <li>${question.choices[2]}</li>
+          <li>${question.choices[3]}</li>
+        </ul>
+        <p>${question.correctIndex + 1}</p>
+      </li>
+    `
   })
 
   document.querySelector<HTMLUListElement>('#question-list')!.innerHTML = questionList.join('')
