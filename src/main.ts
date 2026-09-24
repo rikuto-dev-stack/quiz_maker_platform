@@ -124,20 +124,62 @@ function renderAddQuestion(quizSetId: string): void {
   `
   //ここに作成した問題の一覧の内容を作成していく
 
-  const questionList = quizSet.questions.map((question) => {
+  //↓箇条書き風に表示されるので一旦没
+  // const questionList = quizSet.questions.map((question) => {
+  //   return `
+  //     <li>
+  //       <p>${question.questionText}</p>
+  //       <ul>
+  //         <li>${question.choices[0]}</li>
+  //         <li>${question.choices[1]}</li>
+  //         <li>${question.choices[2]}</li>
+  //         <li>${question.choices[3]}</li>
+  //       </ul>
+  //       <p>${question.correctIndex + 1}</p>
+  //     </li>
+  //   `
+  // })
+
+  const questionList = quizSet.questions.map((question,index) => {
     return `
-      <li>
-        <p>${question.questionText}</p>
+    <li class="question-card">
+     <div class="question-card-header">
+      <strong>エントリ${index + 1}</strong>
+      <span class="question-type">選択問題</span>
+     </div>
+
+     <div class="question-card-body">
+
+      <div class="question-content">
+       <h3>問題</h3>
+       <p>${question.questionText}</p>
+      </div>
+
+      <div class="choicesd-content">
+        <h3>選択肢</h3>
+
         <ul>
-          <li>${question.choices[0]}</li>
-          <li>${question.choices[1]}</li>
-          <li>${question.choices[2]}</li>
-          <li>${question.choices[3]}</li>
+          ${question.choices.map((choice,choiceIndex) => `
+            <li class="${choiceIndex === question.correctIndex ? `correct-choice` : ''}">
+              <span class="choice-number">${choiceIndex + 1}</span>
+              <span class="choice-text">${choice}</span>
+
+              ${
+                choiceIndex ===question.correctIndex
+                  ? `<span class="correct-mark">✓</span>`
+                  : ``
+              }
+            </li>
+            `).join(``)}
         </ul>
-        <p>${question.correctIndex + 1}</p>
-      </li>
+      </div>
+
+    </div>
+  </li>
     `
   })
+
+
 
   document.querySelector<HTMLUListElement>('#question-list')!.innerHTML = questionList.join('')
 
