@@ -19,7 +19,7 @@ function renderHome(): void {
     <ul>
       ${quizSets.map((quizSet) => `<li>${quizSet.name}</li>`).join('')}
     </ul>
-  `
+  ` 
 //
 //(quizSet) =>は、アロー関数という書き方になる
 //これを普通の関数風に書くと、
@@ -124,53 +124,36 @@ function renderAddQuestion(quizSetId: string): void {
   `
   //ここに作成した問題の一覧の内容を作成していく
 
-  //↓箇条書き風に表示されるので一旦没
-  // const questionList = quizSet.questions.map((question) => {
-  //   return `
-  //     <li>
-  //       <p>${question.questionText}</p>
-  //       <ul>
-  //         <li>${question.choices[0]}</li>
-  //         <li>${question.choices[1]}</li>
-  //         <li>${question.choices[2]}</li>
-  //         <li>${question.choices[3]}</li>
-  //       </ul>
-  //       <p>${question.correctIndex + 1}</p>
-  //     </li>
-  //   `
-  // })
-
-  const questionList = quizSet.questions.map((question,index) => {
+  const questionList = quizSet.questions.map((question,questionIndex) => {
     return `
     <li class="question-card">
      <div class="question-card-header">
-      <strong>エントリ${index + 1}</strong>
-      <span class="question-type">選択問題</span>
+      <strong>エントリ${questionIndex + 1}</strong>
+      <span >選択問題</span>
      </div>
 
      <div class="question-card-body">
-
       <div class="question-content">
        <h3>問題</h3>
        <p>${question.questionText}</p>
       </div>
 
-      <div class="choicesd-content">
+      <div class="choices-content">
         <h3>選択肢</h3>
 
         <ul>
-          ${question.choices.map((choice,choiceIndex) => `
-            <li class="${choiceIndex === question.correctIndex ? `correct-choice` : ''}">
-              <span class="choice-number">${choiceIndex + 1}</span>
-              <span class="choice-text">${choice}</span>
+          ${question.choices.map((choice,choiceIndex) => {
+            const isCorrect = choiceIndex === question.correctIndex
 
-              ${
-                choiceIndex ===question.correctIndex
-                  ? `<span class="correct-mark">✓</span>`
-                  : ``
-              }
+           return `
+            <li>
+              <span>${choiceIndex + 1} ${choice}</span>
+              ${isCorrect ? '<span class="correct-mark">✓</span>' : ''}
             </li>
-            `).join(``)}
+           `
+          }).join(``)}
+          
+           
         </ul>
       </div>
 

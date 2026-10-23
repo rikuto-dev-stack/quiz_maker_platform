@@ -23,3 +23,61 @@ body {
 
 /*cssは、文法チェックがなく、エラーが返ってくることはなく、タイプミスの文章はただ無視
 されるだけとなる。そのため、エラーについては自分自身で気付く必要がある*/
+
+/*作成済み問題のカード*/
+.question-card {
+  list-style: none;
+  border: 1px solid #ddd;
+  margin-bottom: 24px;
+}
+
+.question-card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.question-card-body {
+  display: flex;
+}
+
+.question-content {
+  width: 50%;
+  padding: 20px;
+  box-sizing: border-box;
+  }
+
+.choices-content {
+  width: 50%;
+  padding: 20px;
+  box-sizing: border-box;
+  border-left: 1px solid #ddd;
+}
+
+.choices-content ul {
+  list-style: none;
+  padding: 0;
+}
+
+.choices-content li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.correct-mark {
+  margin-left: auto;
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.question-card-header span {
+  background-color: #d9f5c7;
+  padding: 6px 12px;
+  border-radius: 6px;
+}
