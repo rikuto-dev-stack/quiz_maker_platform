@@ -1,11 +1,11 @@
-//下で使用しているQuestionの中身
+//問題の情報を格納するための配列
 export interface Question {
   questionText: string
   choices: [string, string, string, string]
   correctIndex: number
 }
 
-//questionsは、作成したものを画面上で一時保存するための新しい配列
+//問題集の情報を管理するための配列
 export interface QuizSet {
   id: string
   name: string

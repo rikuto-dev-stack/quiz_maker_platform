@@ -15,27 +15,143 @@ const quizSets: QuizSet[] = [
 function renderHome(): void {
   document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <h1>クイズ作成プラットフォーム</h1>
-    <button id="create-quiz-set-button">新しい問題集を作る</button>
-    <ul>
-      ${quizSets.map((quizSet) => `<li>${quizSet.name}</li>`).join('')}
-    </ul>
-  ` 
-//
-//(quizSet) =>は、アロー関数という書き方になる
-//これを普通の関数風に書くと、
-//function (quizSet) {
-//   return `<li>${quizSet.name}</li>`
-// }
-//となる。
-//つまり、「配列から1個取り出したものをquiz.setという名前で受け取ります。」
-//という処理
+    <button id="create-quiz-set-button">
+    新しい問題集を作る
+    </button>
+    
+   <h2>問題集一覧</h2>
+   <ul>
+    ${quizSets.map((quizSet) =>`
+      <li>
+        <strong>${quizSet.name}</strong>
+        (${quizSet.questions.length}問)
 
+        <button
+          class="start-quiz-button"
+          data-quiz-set-id="${quizSet.id}"
+          ${quizSet.questions.length === 0 ? 'disabled' : ''}
+        >
+         クイズを始める 
+        </button>
+      </li>
+      `).join('')}
+   </ul>
+  `
+  document
+      .querySelector<HTMLButtonElement>('#create-quiz-set-button')!
+      .addEventListener('click' , () => {
+        renderCreateQuizSet()
+      })
 
-  document.querySelector<HTMLButtonElement>('#create-quiz-set-button')!.addEventListener('click', () => {
-    renderCreateQuizSet()
-  })
+  document
+      .querySelectorAll<HTMLButtonElement>('.start-quiz-button')
+      .forEach((button) => {
+        button.addEventListener('click', () => {
+          const quizSetId = button.dataset.quizSetId
+
+          if(quizSetId){
+            renderQuiz(quizSetId)
+          }
+      })
+    })
 }
 //
+function renderQuiz(quizSetId: string): void {
+
+  //渡されたIDと一致する問題集を見つける
+  const quizSet = quizSets.find((quizSet) => {
+    return quizSet.id === quizSetId
+  })
+
+  //問題集が見つからなかった場合の処理
+  if (!quizSet) {
+    renderHome()
+    return
+  }
+
+  //問題が  登録されていなかった場合の処理
+  if(quizSet.questions.length === 0){
+    renderHome()
+    return
+  }
+  //現在の問題番号を管理する変数
+  const currentQuestionIndex = 0
+
+  //現在の問題番号を管理するための変数
+  const question = quizSet.questions[currentQuestionIndex]
+
+  document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
+    <h1>${quizSet.name}</h1>
+
+    <p>
+      問題 ${currentQuestionIndex +  1} /
+      ${quizSet.questions.length}
+    </p>
+
+    <h2>${question.questionText}</h2>
+
+    <ul>
+      ${question.choices.map((choice, index) => {
+        return `
+          <li>
+            <button
+              class="quiz-choice-button"
+              data-index="${index}"
+            >
+              ${index + 1}. ${choice}
+            </button>
+
+          </li>
+        `
+      }).join('')}
+    </ul>
+
+    <div id="answer-feedback"></div>
+
+    <button id="back-home-button">
+      ホーム画面に戻る
+    </button>
+  `
+      //次回はここにSTEP2の内容を追記していく
+
+  document
+      .querySelectorAll<HTMLButtonElement>('.quiz-choice-button')
+      .forEach((button) => {
+
+        //それぞれのボタンのクリックイベントを設定する
+        button.addEventListener('click', () => {
+
+          //クリックされた選択肢の番号を取得する
+          const selectedIndex = Number(button.dataset.index)
+
+          //正解番号とクリックされた番号を比較する
+          const isCorrect = selectedIndex === question.correctIndex
+
+          //回答結果を表示する場所を取得する
+          const feedback = document.querySelector<HTMLDivElement>('#answer-feedback')!
+
+          if (isCorrect) {
+            feedback.textContent = '正解！'
+          } else {
+            feedback.textContent = '不正解！'
+          }
+
+          //回答後はすべての選択肢をクリックできなくする
+          document
+            .querySelectorAll<HTMLButtonElement>('.quiz-choice-button')
+            .forEach((choiceButton) => {
+              choiceButton.disabled = true
+            })
+         })
+      })
+  
+  document
+      .querySelector<HTMLButtonElement>('#back-home-button')!
+      .addEventListener('click', () => {
+        renderHome()
+      })
+}
+
 
 function renderCreateQuizSet(): void {
   document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
@@ -96,6 +212,8 @@ function renderAddQuestion(quizSetId: string): void {
 
   //document.querySelector<HTMLDivElement>('#app')!.innerHTML =の部分は、
   //このformタグの中身を表示している部分
+
+  //この部分はクイズを作成する時の入力欄を作るための部分
   document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
     <h1>「${quizSet.name}」に問題を追加</h1>
     <form id="add-question-form">
@@ -162,15 +280,11 @@ function renderAddQuestion(quizSetId: string): void {
     `
   })
 
-
-
   document.querySelector<HTMLUListElement>('#question-list')!.innerHTML = questionList.join('')
-
-
   document.querySelector<HTMLFormElement>('#add-question-form')!.addEventListener('submit', (event) => {
     event.preventDefault()
 
-    //問題文、選択肢、解答の照合番号の入力欄の要素を格納する変数を作成している
+    //問題文、選択肢、解答の照合番号の入力欄そのものの要素を格納する変数を作成している
     const questionTextInput = document.querySelector<HTMLInputElement>('#question-text')!
     const choice0Input = document.querySelector<HTMLInputElement>('#choice-0')!
     const choice1Input = document.querySelector<HTMLInputElement>('#choice-1')!
@@ -178,16 +292,16 @@ function renderAddQuestion(quizSetId: string): void {
     const choice3Input = document.querySelector<HTMLInputElement>('#choice-3')!
     const correctIndexInput = document.querySelector<HTMLInputElement>('#correct-index')!
 
-    //上で変数に格納した要素からテキストデータだけを取り出す処理
+    //上で変数に格納した要素から入力されたテキストデータだけを取り出す処理
     const newQuestion: Question = {
       questionText: questionTextInput.value,
       choices: [choice0Input.value, choice1Input.value, choice2Input.value, choice3Input.value],
       correctIndex: Number(correctIndexInput.value) - 1,
     }
 
-
+    //作成したクイズ問題を問題を格納している配列にプッシュしている
     quizSet.questions.push(newQuestion)
-
+    //
     renderAddQuestion(quizSetId)
   })
 
