@@ -74,84 +74,142 @@ function renderQuiz(quizSetId: string): void {
     renderHome()
     return
   }
+
+  const currentQuizSet = quizSet
+
   //現在の問題番号を管理する変数
-  const currentQuestionIndex = 0
+  let currentQuestionIndex = 0
 
-  //現在の問題番号を管理するための変数
-  const question = quizSet.questions[currentQuestionIndex]
+  //回答結果を保存する配列(回答した問題番号,選択した選択肢番号,正解だったか)
+  const answerResults: {
+    questionIndex: number
+    selectedIndex: number
+    isCorrect: boolean
+  }[]=[]
 
-  document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
-    <h1>${quizSet.name}</h1>
+  function renderQuestion(): void {
+
+    //現在の問題を取得する
+    const question = currentQuizSet.questions[currentQuestionIndex]
+
+    //出題画面を表示する
+    document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
+    <h1>${currentQuizSet.name}</h1>
 
     <p>
-      問題 ${currentQuestionIndex +  1} /
-      ${quizSet.questions.length}
+      問題 ${currentQuestionIndex + 1} /
+      ${currentQuizSet.questions.length}
     </p>
 
     <h2>${question.questionText}</h2>
 
     <ul>
-      ${question.choices.map((choice, index) => {
-        return `
-          <li>
-            <button
-              class="quiz-choice-button"
-              data-index="${index}"
-            >
-              ${index + 1}. ${choice}
-            </button>
-
-          </li>
-        `
-      }).join('')}
+     ${question.choices.map((choice, index) => {
+      return `
+        <li>
+          <button
+            class="quiz-choice-button"
+            data-index="${index}"          
+          >
+            ${index + 1}.${choice}
+          </button>
+        </li>
+      `
+     }).join('')}
     </ul>
 
     <div id="answer-feedback"></div>
-
     <button id="back-home-button">
-      ホーム画面に戻る
+     ホーム画面に戻る
     </button>
-  `
-      //次回はここにSTEP2の内容を追記していく
+    `
 
-  document
-      .querySelectorAll<HTMLButtonElement>('.quiz-choice-button')
-      .forEach((button) => {
+    //選択肢のクリックイベント
+    document
+     .querySelectorAll<HTMLButtonElement>('.quiz-choice-button')
+     .forEach((button) =>{
 
-        //それぞれのボタンのクリックイベントを設定する
-        button.addEventListener('click', () => {
+      button.addEventListener('click',() =>{
 
-          //クリックされた選択肢の番号を取得する
-          const selectedIndex = Number(button.dataset.index)
+        //クリックされた選択肢の番号を取得する
+        const selectedIndex = Number(button.dataset.index)
 
-          //正解番号とクリックされた番号を比較する
-          const isCorrect = selectedIndex === question.correctIndex
+        //正誤判定
+        const isCorrect = selectedIndex === question.correctIndex
 
-          //回答結果を表示する場所を取得する
-          const feedback = document.querySelector<HTMLDivElement>('#answer-feedback')!
+        //回答結果を保持
+        answerResults.push({
+          questionIndex: currentQuestionIndex,
+          selectedIndex: selectedIndex,
+          isCorrect: isCorrect
+        })
 
-          if (isCorrect) {
-            feedback.textContent = '正解！'
-          } else {
-            feedback.textContent = '不正解！'
-          }
+        const feedback = document.querySelector<HTMLDivElement>('#answer-feedback')!
 
-          //回答後はすべての選択肢をクリックできなくする
-          document
-            .querySelectorAll<HTMLButtonElement>('.quiz-choice-button')
-            .forEach((choiceButton) => {
-              choiceButton.disabled = true
-            })
-         })
+        if(isCorrect) {
+          feedback.textContent = '正解！' 
+        } else {
+          feedback.textContent = '不正解 !'
+        }
+
+        //選択肢をクリックできなくする
+        document
+          .querySelectorAll<HTMLButtonElement>('.quiz-choice-button')
+          .forEach((choiceButton) =>{
+            choiceButton.disabled = true
+          })
+        
+        //次の問題へ進むボタン
+        feedback.innerHTML += `
+          <button id="next-question-button">
+            ${currentQuestionIndex  + 1 === currentQuizSet.questions.length
+              ? '問題終了'
+              : '次の問題へ'}
+          </button>
+        `
+
+        //次の問題へ進むイベント
+        document
+          .querySelector<HTMLButtonElement>('#next-question-button')!
+          .addEventListener('click',() => {
+            if(currentQuestionIndex + 1 < currentQuizSet.questions.length){
+              
+              //問題番号を１つ増やす
+              currentQuestionIndex++
+
+              //次の問題を表示
+              renderQuestion()
+            } else {
+              //全問終了
+              document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
+                <h1>クイズ終了</h1>
+                <p>${answerResults.length}問の回答が終了しました。</p>
+                <button id="back-home-button">
+                  ホームに戻る
+                </button>
+              `
+
+            document
+              .querySelector<HTMLButtonElement>('#back-home-button')!
+              .addEventListener('click',() => {
+                renderHome()
+              })
+            }
+          })
+
       })
-  
-  document
+     })
+
+     //ホーム画面に戻るボタン
+     document
       .querySelector<HTMLButtonElement>('#back-home-button')!
-      .addEventListener('click', () => {
+      .addEventListener('click',() => {
         renderHome()
       })
-}
-
+  }
+    renderQuestion()
+  }
+//=================================================
 
 function renderCreateQuizSet(): void {
   document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
