@@ -188,6 +188,9 @@ function renderQuiz(quizSetId: string): void {
                   ホームに戻る
                 </button>
               `
+              const correctCount = answerResults.filter((result) => {
+                return result.isCorrect
+              }).length
 
             document
               .querySelector<HTMLButtonElement>('#back-home-button')!
@@ -209,7 +212,6 @@ function renderQuiz(quizSetId: string): void {
   }
     renderQuestion()
   }
-//=================================================
 
 function renderCreateQuizSet(): void {
   document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
