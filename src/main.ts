@@ -244,7 +244,7 @@ function renderCreateQuizSet(): void {
       //nameに先ほど宣言したnameInputのものを設定している
     name: nameInput.value,
     questions: [],
-  }
+    }
 
    quizSets.push(newQuizSet)
     renderAddQuestion(newQuizSet.id)
